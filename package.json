@@ -1,0 +1,32 @@
+{
+  "name": "books-apollo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development ./node_modules/.bin/nodemon yarn start",
+    "start": "NODE_ENV=production node index.js",
+    "format": "node_modules/.bin/prettier *.js **/*.js --write"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.0.5",
+    "apollo-server-express": "^2.0.4",
+    "cors": "^2.8.4",
+    "dataloader": "^1.4.0",
+    "get-sheet-done-3": "^2.0.0",
+    "graphql": "^0.13.2",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.2",
+    "node-cache": "^4.2.0",
+    "node-fetch": "^2.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.4.0",
+    "nodemon": "^1.18.3",
+    "prettier": "^1.14.2"
+  }
+}
