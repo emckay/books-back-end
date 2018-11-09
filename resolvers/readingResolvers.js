@@ -16,6 +16,9 @@ module.exports.schema = gql`
     contrarinessPercentile: Float
     contrarinessAbs: Float
     contrarinessAbsPercentile: Float
+    daysToFinish: Int
+    daysToFinishPercentile: Float
+    finished: Float
   }
 `;
 
@@ -26,10 +29,13 @@ module.exports.resolvers = {
   ratingPercentile: _.property('ratingPercentile'),
   audio: _.property('audio'),
   amountPerDay: _.property('amountPerDay'),
+  daysToFinish: _.property('daysToFinish'),
+  daysToFinishPercentile: _.property('daysToFinishPercentile'),
   contrariness: _.property('contrariness'),
   contrarinessPercentile: _.property('contrarinessPercentile'),
   contrarinessAbs: _.property('contrarinessAbs'),
   contrarinessAbsPercentile: _.property('contrarinessAbsPercentile'),
+  finished: _.property('finished'),
   book: (obj, args, context) =>
     context.googleSheetsConnector.loadBook(obj.bookIsbn),
 };

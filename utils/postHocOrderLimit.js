@@ -22,10 +22,13 @@ module.exports = (data, args) => {
     }
   }
   if (args.orderBy) {
-    retData = _.orderBy(retData, args.orderBy);
-  }
-  if (args.order && args.order.toLowerCase() === 'desc') {
-    retData = _.reverse(retData);
+    const order =
+      args.order && args.order.toLowerCase() === 'desc' ? 'desc' : 'asc';
+    // Always put nils at end by removing from the list, then sorting, then putting them back.
+    const [nils, nonNils] = _.partition(retData, (row) =>
+      _.isNil(row[args.orderBy]),
+    );
+    retData = _.orderBy(nonNils, args.orderBy, order).concat(nils);
   }
   if (args.limit) {
     retData = retData.slice(0, args.limit);

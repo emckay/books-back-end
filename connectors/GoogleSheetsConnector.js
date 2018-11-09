@@ -66,22 +66,28 @@ class GoogleSheetsConnector {
         : null;
       let days;
       if (startDate && endDate) {
-        days = moment(endDate).diff(moment(startDate), 'days');
+        days = moment(endDate).diff(moment(startDate), 'days') + 1;
       }
       return {
-        startDate,
-        endDate,
+        startDate: moment(startDate).toISOString(),
+        endDate: moment(endDate).toISOString(),
         rating: row.rating ? parseFloat(row.rating) : null,
         audio: row.audio === '1' || row.audio === 1,
         bookIsbn: row.isbn10,
+        finished: row.finished,
         authorNames: splitAuthorNames(row.author).filter((name) => name),
         amountPerDay: length && days ? length / days : null,
+        daysToFinish: days,
       };
     });
     const goodreadsRatingsAvgs = await this.goodreadsConnector.getAllRatingsAvgs(
       _.uniq(readings.map((r) => r.bookIsbn)),
     );
-    readings = addPercentileRanks(readings, ['rating', 'amountPerDay']);
+    readings = addPercentileRanks(readings, [
+      'rating',
+      'amountPerDay',
+      'daysToFinish',
+    ]);
     readings = await Promise.all(
       readings.map(async (r) => {
         const goodreadsRatingsAvgPercentile = percentileRank(
@@ -115,12 +121,12 @@ class GoogleSheetsConnector {
       spreadsheet.map((row) => ({
         isbn: row.isbn10,
         title: row.title,
-        estimatedLength: row.estimatedkindlelength,
+        estimatedLength: parseInt(row.estimatedkindlelength, 10),
         authorNames: splitAuthorNames(row.author).filter((name) => name),
       })),
       'isbn',
     );
-    return books;
+    return addPercentileRanks(books, ['estimatedLength']);
   }
 
   async loadBooksByAuthor(authorName) {

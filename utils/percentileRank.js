@@ -20,13 +20,14 @@ module.exports = percentileRank;
 const addPercentileRanks = (objects, keys) => {
   const returnedObjects = _.cloneDeep(objects);
   for (const key of keys) {
-    const allValues = returnedObjects.map((o) => o[key]).filter((v) => v);
+    const allValues = returnedObjects
+      .map((o) => o[key])
+      .filter((v) => v && !Number.isNaN(v));
     for (const object of returnedObjects) {
-      object[key] !== undefined && object[key] !== null
-        ? null
-        : console.log('no', key, 'for', object);
       object[`${key}Percentile`] =
-        object[key] !== undefined && object[key] !== null
+        object[key] !== undefined &&
+        object[key] !== null &&
+        !Number.isNaN(object[key])
           ? percentileRank(allValues, object[key])
           : null;
     }

@@ -8,6 +8,7 @@ module.exports.schema = gql`
     goodreadsRatingsAvg: Float
     goodreadsRatingsCount: Int
     estimatedLength: Float
+    estimatedLengthPercentile: Float
     authors: [Author!]
     readings: [Reading!]!
     ratingsAvg: Float
@@ -18,6 +19,7 @@ module.exports.resolvers = {
   isbn: _.property('isbn'),
   title: _.property('title'),
   estimatedLength: _.property('estimatedLength'),
+  estimatedLengthPercentile: _.property('estimatedLengthPercentile'),
   goodreadsRatingsAvg: (obj, args, context) =>
     context.goodreadsConnector.getRatingsAvg(obj.isbn),
   goodreadsRatingsCount: (obj, args, context) =>
