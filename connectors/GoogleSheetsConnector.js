@@ -83,6 +83,9 @@ class GoogleSheetsConnector {
     const goodreadsRatingsAvgs = await this.goodreadsConnector.getAllRatingsAvgs(
       _.uniq(readings.map((r) => r.bookIsbn)),
     );
+    const goodreadsRatingsCounts = await this.goodreadsConnector.getAllRatingsCounts(
+      _.uniq(readings.map((r) => r.bookIsbn)),
+    );
     readings = addPercentileRanks(readings, [
       'rating',
       'amountPerDay',
@@ -94,8 +97,13 @@ class GoogleSheetsConnector {
           goodreadsRatingsAvgs,
           await this.goodreadsConnector.getRatingsAvg(r.bookIsbn),
         );
+        const goodreadsRatingsCountPercentile = percentileRank(
+          goodreadsRatingsCounts,
+          await this.goodreadsConnector.getRatingsCount(r.bookIsbn),
+        );
         return Object.assign({}, r, {
           goodreadsRatingsAvgPercentile,
+          goodreadsRatingsCountPercentile,
           contrariness:
             r.rating !== null && r.rating !== undefined
               ? r.ratingPercentile - goodreadsRatingsAvgPercentile

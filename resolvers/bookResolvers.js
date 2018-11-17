@@ -6,7 +6,9 @@ module.exports.schema = gql`
     isbn: String! @unique
     title: String!
     goodreadsRatingsAvg: Float
+    goodreadsRatingsAvgPercentile: Float
     goodreadsRatingsCount: Int
+    goodreadsRatingsCountPercentile: Float
     estimatedLength: Float
     estimatedLengthPercentile: Float
     authors: [Author!]
@@ -22,8 +24,20 @@ module.exports.resolvers = {
   estimatedLengthPercentile: _.property('estimatedLengthPercentile'),
   goodreadsRatingsAvg: (obj, args, context) =>
     context.goodreadsConnector.getRatingsAvg(obj.isbn),
+  goodreadsRatingsAvgPercentile: async (obj, args, context) => {
+    const reading = await context.googleSheetsConnector.loadReadingsByBook(
+      obj.isbn,
+    );
+    return reading[0].goodreadsRatingsAvgPercentile;
+  },
   goodreadsRatingsCount: (obj, args, context) =>
     context.goodreadsConnector.getRatingsCount(obj.isbn),
+  goodreadsRatingsCountPercentile: async (obj, args, context) => {
+    const reading = await context.googleSheetsConnector.loadReadingsByBook(
+      obj.isbn,
+    );
+    return reading[0].goodreadsRatingsCountPercentile;
+  },
   authors: (obj, args, context) =>
     context.googleSheetsConnector.loadAuthorsByBook(obj.isbn),
   ratingsAvg: async (obj, args, context) => {

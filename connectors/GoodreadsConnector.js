@@ -75,6 +75,14 @@ class GoodreadsConnector {
       ),
     );
   }
+
+  async getAllRatingsCounts(isbns) {
+    return await Promise.all(
+      isbns.map(
+        async (isbn) => (await this.reviewCountsLoader.load(isbn)).count,
+      ),
+    );
+  }
 }
 
 module.exports = GoodreadsConnector;
