@@ -33,7 +33,12 @@ class GoodreadsConnector {
     const uri = `${GOODREADS_REVIEW_COUNTS_ENDPOINT}?key=${API_KEY}&isbns=${cleanedIsbns.join(
       '%2C',
     )}`;
-    const result = await fetch(uri).then((res) => res.json());
+    const result = await fetch(uri)
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error('Error loading data from goodreads', err);
+        throw err;
+      });
     const data = cleanedIsbns.map((isbn) => {
       const book = result.books.find((book) => book.isbn === isbn);
       if (!book) {
