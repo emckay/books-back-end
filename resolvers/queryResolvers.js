@@ -19,6 +19,8 @@ module.exports.schema = gql`
     ): [Reading!]!
     books(orderBy: String, order: String, limit: Int): [Book!]!
     book(isbn: String!): Book!
+    dayAggregate(date: String!): DayAggregate!
+    dayAggregates(startDate: String!, endDate: String!): [DayAggregate]!
   }
 `;
 
@@ -32,5 +34,33 @@ module.exports.resolvers = {
   async readings(parent, args, context) {
     const data = await context.googleSheetsConnector.loadReadings();
     return postHocOrderLimit(data, args);
+  },
+  async dayAggregate(parent, args, context) {
+    const date = new Date(args.date);
+    const allReadings = await context.googleSheetsConnector.loadReadings();
+    return {
+      date,
+      readings: allReadings.filter(
+        (reading) =>
+          new Date(reading.startDate) <= date &&
+          new Date(reading.endDate) >= date,
+      ),
+    };
+  },
+  async dayAggregates(parent, args, context) {
+    const startDate = new Date(args.startDate);
+    const endDate = new Date(args.endDate);
+    const allReadings = await context.googleSheetsConnector.loadReadings();
+    const dayAggregates = [];
+    for (let i = startDate; i <= endDate; i.setDate(i.getDate() + 1)) {
+      dayAggregates.push({
+        date: new Date(i),
+        readings: allReadings.filter(
+          (reading) =>
+            new Date(reading.startDate) <= i && new Date(reading.endDate) >= i,
+        ),
+      });
+    }
+    return dayAggregates;
   },
 };
